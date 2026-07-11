@@ -18,7 +18,7 @@ from pathlib import Path
 import typer
 from dotenv import load_dotenv
 
-from attractors.config import RUNS_DIR, GridSpec, RunSpec, load_grid, load_models
+from attractors.config import REPO_ROOT, RUNS_DIR, GridSpec, RunSpec, load_grid, load_models
 from attractors.lineage import run_lineage
 
 app = typer.Typer(add_completion=False, pretty_exceptions_enable=False)
@@ -71,7 +71,7 @@ def run(
     parallel: int = typer.Option(3, "--parallel"),
 ):
     """Expand a grid YAML and execute all runs."""
-    load_dotenv()
+    load_dotenv(REPO_ROOT / ".env")
     grid: GridSpec = load_grid(grid_path)
     models = load_models()
     specs = grid.expand()
@@ -135,7 +135,7 @@ def smoke(
     max_pings: int = typer.Option(10, "--max-pings"),
 ):
     """One tiny cheap run end-to-end (~$0.10) to validate the plumbing."""
-    load_dotenv()
+    load_dotenv(REPO_ROOT / ".env")
     models = load_models()
     spec = RunSpec(
         experiment="smoke", model=model, tool_menu=tool_menu,

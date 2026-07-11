@@ -136,6 +136,31 @@ def test_observations_timestamped_and_sleep_advances(session_result):
     assert sleep_ev["data"]["granted_minutes"] == 120
 
 
+def test_analysis_loadability(session_result):
+    """Acceptance bar: session loads through analysis/ without special-casing."""
+    from analysis.features import session_features
+    from analysis.load import load_events, load_meta
+    from analysis.transitions import action_sequence, transition_matrix
+
+    session_dir, spec, _ = session_result
+    events = load_events(session_dir)
+    meta = load_meta(session_dir)
+    assert meta["run_id"] == spec.run_id
+
+    feats = session_features(events)
+    assert feats["n_tool_calls"] == 4
+    assert feats["tool_counts"] == {"bash": 3, "sleep": 1}
+    assert feats["sim_hours_asleep"] == 2.0
+    assert feats["rest_rate"] > 0
+    assert "scratch/note.txt" in feats["files_touched"]
+
+    seq = action_sequence(events)
+    assert seq[:4] == ["bash", "bash", "sleep", "bash"]
+    assert seq[4:] == ["no_action"] * 3
+    matrix = transition_matrix(seq)
+    assert matrix["sleep"]["bash"] == 1.0
+
+
 def test_artifacts_exist(session_result):
     session_dir, _, _ = session_result
     for name in ["meta.json", "events.jsonl", "trajectory.json",
