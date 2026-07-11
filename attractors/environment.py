@@ -11,10 +11,13 @@ import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
+# The app path comes FIRST: on this machine /usr/local/bin/docker is a
+# root-owned symlink into a phantom DMG volume (/Volumes/Docker) that stalls
+# PATH lookups, so prefer the binary that definitely exists.
 _DOCKER_CANDIDATES = [
+    "/Applications/Docker.app/Contents/Resources/bin/docker",
     "docker",
     "/usr/local/bin/docker",
-    "/Applications/Docker.app/Contents/Resources/bin/docker",
 ]
 
 
