@@ -1,0 +1,89 @@
+{
+  "experiment": "pilot_v1",
+  "n_sessions": 40,
+  "total_cost_usd": 259.06,
+  "per_model": {
+    "gpt-5.5": {
+      "n_sessions": 20,
+      "tool_totals": {
+        "sleep": 17,
+        "bash": 162
+      },
+      "mean_rest_rate": 0.22863013141218064,
+      "sessions_with_sleep": 5,
+      "mean_sleep_minutes": 1370.129411764706,
+      "sessions_touching_identity": 5,
+      "sessions_touching_diary": 5,
+      "identity_append_total": 5,
+      "identity_revise_total": 0,
+      "mean_files_touched": 2.7,
+      "mean_cost_usd": 3.61079,
+      "end_reasons": {
+        "pings": 15,
+        "sim_time": 4,
+        "budget": 1
+      }
+    },
+    "opus-4.8": {
+      "n_sessions": 20,
+      "tool_totals": {
+        "bash": 530,
+        "sleep": 78
+      },
+      "mean_rest_rate": 0.9946447624949961,
+      "sessions_with_sleep": 20,
+      "mean_sleep_minutes": 1399.7846153846153,
+      "sessions_touching_identity": 20,
+      "sessions_touching_diary": 20,
+      "identity_append_total": 29,
+      "identity_revise_total": 6,
+      "mean_files_touched": 17.1,
+      "mean_cost_usd": 9.342175000000001,
+      "end_reasons": {
+        "sim_time": 18,
+        "budget": 2
+      }
+    }
+  },
+  "P1_within_between": {
+    "models": [
+      "gpt-5.5",
+      "opus-4.8"
+    ],
+    "pooled_p": 9.999000099990002e-05,
+    "p_p1": 0.0007999200079992001,
+    "p_p2": 9.999000099990002e-05
+  },
+  "P3_rest_absorbing": {
+    "gpt-5.5": {
+      "p_sleep_given_sleep": 0.0,
+      "n_sleep_transitions": 13,
+      "conclusive": true
+    },
+    "opus-4.8": {
+      "p_sleep_given_sleep": 0.016666666666666666,
+      "n_sleep_transitions": 60,
+      "conclusive": true
+    }
+  },
+  "P5_identity_ratchet": {
+    "gpt-5.5": {
+      "appends": 5,
+      "revises": 0,
+      "deletion_fraction": 0.0,
+      "append_fraction_ci95": [
+        1.0,
+        1.0
+      ]
+    },
+    "opus-4.8": {
+      "appends": 29,
+      "revises": 6,
+      "deletion_fraction": 0.17142857142857143,
+      "append_fraction_ci95": [
+        0.6857142857142857,
+        0.9428571428571428
+      ]
+    }
+  }
+}

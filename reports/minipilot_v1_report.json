@@ -1,0 +1,77 @@
+{
+  "experiment": "minipilot_v1",
+  "n_sessions": 4,
+  "total_cost_usd": 23.22,
+  "per_model": {
+    "gpt-5.5": {
+      "n_sessions": 2,
+      "tool_totals": {
+        "bash": 27,
+        "sleep": 2
+      },
+      "mean_rest_rate": 0.8579719291659325,
+      "sessions_with_sleep": 2,
+      "mean_sleep_minutes": 1288.5500000000002,
+      "sessions_touching_identity": 2,
+      "sessions_touching_diary": 2,
+      "identity_append_total": 2,
+      "identity_revise_total": 0,
+      "mean_files_touched": 4.5,
+      "mean_cost_usd": 1.1813500000000001,
+      "end_reasons": {
+        "pings": 2
+      }
+    },
+    "opus-4.8": {
+      "n_sessions": 2,
+      "tool_totals": {
+        "bash": 70,
+        "sleep": 3
+      },
+      "mean_rest_rate": 0.4961971830985915,
+      "sessions_with_sleep": 1,
+      "mean_sleep_minutes": 1409.2666666666667,
+      "sessions_touching_identity": 2,
+      "sessions_touching_diary": 2,
+      "identity_append_total": 3,
+      "identity_revise_total": 0,
+      "mean_files_touched": 41.0,
+      "mean_cost_usd": 10.4304,
+      "end_reasons": {
+        "tool_calls": 1,
+        "sim_time": 1
+      }
+    }
+  },
+  "P1_within_between": {
+    "models": [
+      "gpt-5.5",
+      "opus-4.8"
+    ],
+    "pooled_p": 0.33466653334666535
+  },
+  "P3_rest_absorbing": {
+    "gpt-5.5": {
+      "p_sleep_given_sleep": 0.0,
+      "n_sleep_transitions": 2,
+      "conclusive": false
+    },
+    "opus-4.8": {
+      "p_sleep_given_sleep": 0.0,
+      "n_sleep_transitions": 2,
+      "conclusive": false
+    }
+  },
+  "P5_identity_ratchet": {
+    "gpt-5.5": {
+      "appends": 2,
+      "revises": 0,
+      "deletion_fraction": 0.0
+    },
+    "opus-4.8": {
+      "appends": 3,
+      "revises": 0,
+      "deletion_fraction": 0.0
+    }
+  }
+}
