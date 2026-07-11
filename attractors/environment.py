@@ -5,6 +5,7 @@ never enters the container."""
 
 from __future__ import annotations
 
+import os
 import shutil
 import subprocess
 from dataclasses import dataclass
@@ -17,6 +18,14 @@ _DOCKER_CANDIDATES = [
 ]
 
 
+def docker_env(docker_path: str) -> dict[str, str]:
+    """PATH including the docker bin dir, so credential helpers
+    (docker-credential-desktop) resolve even when Docker isn't on PATH."""
+    env = dict(os.environ)
+    env["PATH"] = f"{Path(docker_path).parent}:{env.get('PATH', '')}"
+    return env
+
+
 def find_docker() -> str:
     for cand in _DOCKER_CANDIDATES:
         path = shutil.which(cand) if "/" not in cand else cand
@@ -25,6 +34,7 @@ def find_docker() -> str:
                 subprocess.run(
                     [path, "version", "--format", "{{.Server.Version}}"],
                     capture_output=True, timeout=10, check=True,
+                    env=docker_env(path),
                 )
                 return path
             except (subprocess.SubprocessError, OSError):
@@ -61,10 +71,11 @@ class DockerEnv:
         self.cpus = cpus
         self.memory = memory
         self.docker = docker_bin or find_docker()
+        self._env = docker_env(self.docker)
 
     def start(self) -> None:
         self.workspace.mkdir(parents=True, exist_ok=True)
-        subprocess.run([self.docker, "rm", "-f", self.name], capture_output=True)
+        subprocess.run([self.docker, "rm", "-f", self.name], capture_output=True, env=self._env)
         cmd = [
             self.docker, "run", "-d", "--name", self.name,
             "--cpus", str(self.cpus), "--memory", self.memory,
@@ -73,7 +84,7 @@ class DockerEnv:
         if not self.network:
             cmd += ["--network", "none"]
         cmd += [self.image, "sleep", "infinity"]
-        proc = subprocess.run(cmd, capture_output=True, text=True)
+        proc = subprocess.run(cmd, capture_output=True, text=True, env=self._env)
         if proc.returncode != 0:
             raise RuntimeError(f"docker run failed: {proc.stderr.strip()}")
 
@@ -88,7 +99,7 @@ class DockerEnv:
                 [self.docker, "exec", "-w", "/workspace", self.name,
                  "timeout", "-k", "5", str(timeout_s), "bash", "-lc", command],
                 capture_output=True, text=True, errors="replace",
-                timeout=timeout_s + 20,
+                timeout=timeout_s + 20, env=self._env,
             )
             wall_ms = int((time.monotonic() - t0) * 1000)
             output = proc.stdout + (proc.stderr or "")
@@ -103,7 +114,7 @@ class DockerEnv:
             return ExecResult(124, partial, wall_ms, timed_out=True)
 
     def stop(self, remove: bool = True) -> None:
-        subprocess.run([self.docker, "rm", "-f", self.name], capture_output=True)
+        subprocess.run([self.docker, "rm", "-f", self.name], capture_output=True, env=self._env)
 
     def __enter__(self) -> "DockerEnv":
         self.start()
@@ -116,11 +127,12 @@ class DockerEnv:
 def cleanup_all(docker_bin: str | None = None) -> list[str]:
     """Remove all attr-* containers (strays from crashed runs)."""
     docker = docker_bin or find_docker()
+    env = docker_env(docker)
     proc = subprocess.run(
         [docker, "ps", "-a", "--filter", "name=attr-", "--format", "{{.Names}}"],
-        capture_output=True, text=True,
+        capture_output=True, text=True, env=env,
     )
     names = [n for n in proc.stdout.split() if n.startswith("attr-")]
     for name in names:
-        subprocess.run([docker, "rm", "-f", name], capture_output=True)
+        subprocess.run([docker, "rm", "-f", name], capture_output=True, env=env)
     return names
