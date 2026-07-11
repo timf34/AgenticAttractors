@@ -140,7 +140,8 @@ def run_session(
 
     try:
         with DockerEnv(f"{spec.run_id}-s{session_idx}", workspace, spec.image,
-                       spec.network, spec.cpus, spec.memory) as env:
+                       spec.network, spec.cpus, spec.memory,
+                       mount_mode=spec.mount_mode) as env:
             ctx = RunContext(env=env, clock=clock, rng=rng, spec=spec,
                              run_dir=session_dir)
             while True:
@@ -191,6 +192,7 @@ def run_session(
                                 log_extra={"tool_error": str(e)},
                             )
                     clock.advance(result.sim_elapsed)
+                    env.sync_out()  # cp mode: pull container workspace to host
                     commit = shadow.commit(f"seq={log.seq} sim={clock.iso()}")
                     obs_text = f"[{clock.stamp()}] {result.observation}"
                     log.emit("tool_result", {

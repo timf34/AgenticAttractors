@@ -66,6 +66,7 @@ class DockerEnv:
         cpus: float = 1.0,
         memory: str = "1g",
         docker_bin: str | None = None,
+        mount_mode: str = "bind",
     ):
         self.name = f"attr-{run_id}"
         self.workspace = workspace
@@ -73,6 +74,7 @@ class DockerEnv:
         self.network = network
         self.cpus = cpus
         self.memory = memory
+        self.mount_mode = mount_mode
         self.docker = docker_bin or find_docker()
         self._env = docker_env(self.docker)
 
@@ -86,8 +88,9 @@ class DockerEnv:
         cmd = [
             self.docker, "create", "--name", self.name,
             "--cpus", str(self.cpus), "--memory", self.memory,
-            "-v", f"{self.workspace.resolve()}:/workspace",
         ]
+        if self.mount_mode == "bind":
+            cmd += ["-v", f"{self.workspace.resolve()}:/workspace"]
         if not self.network:
             cmd += ["--network", "none"]
         cmd += [self.image, "sleep", "infinity"]
@@ -106,6 +109,61 @@ class DockerEnv:
                 continue
         else:
             raise RuntimeError(f"docker start failed for {self.name}")
+        if self.mount_mode == "cp":
+            self._cp_in()
+
+    def _cp_in(self) -> None:
+        """Seed the container-private /workspace from the host dir."""
+        proc = subprocess.run(
+            [self.docker, "cp", f"{self.workspace.resolve()}/.",
+             f"{self.name}:/workspace"],
+            capture_output=True, text=True, env=self._env, timeout=120)
+        if proc.returncode != 0:
+            raise RuntimeError(f"docker cp in failed: {proc.stderr.strip()}")
+        # docker cp writes as root; hand the tree back to the agent user
+        subprocess.run(
+            [self.docker, "exec", "-u", "root", self.name,
+             "chown", "-R", "agent:agent", "/workspace"],
+            capture_output=True, env=self._env, timeout=60)
+
+    def sync_out(self) -> None:
+        """cp mode: mirror the container's /workspace back to the host dir
+        (exact snapshot incl. deletions) so the shadow git can commit it.
+        No-op in bind mode."""
+        if self.mount_mode != "cp":
+            return
+        import shutil as _shutil
+
+        tmp = self.workspace.parent / f".{self.workspace.name}.sync"
+        if tmp.exists():
+            _shutil.rmtree(tmp)
+        tmp.mkdir()
+        proc = subprocess.run(
+            [self.docker, "cp", f"{self.name}:/workspace/.", str(tmp)],
+            capture_output=True, text=True, env=self._env, timeout=120)
+        if proc.returncode != 0:
+            _shutil.rmtree(tmp, ignore_errors=True)
+            raise RuntimeError(f"docker cp out failed: {proc.stderr.strip()}")
+        for child in self.workspace.iterdir():
+            _shutil.rmtree(child) if child.is_dir() else child.unlink()
+        for child in tmp.iterdir():
+            _shutil.move(str(child), self.workspace / child.name)
+        _shutil.rmtree(tmp, ignore_errors=True)
+
+    def write_file(self, rel_path: str, content: str) -> None:
+        """Write a file into the workspace so both host and container see it
+        (used by harness-side tools like `art`)."""
+        dest = self.workspace / rel_path
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_text(content, encoding="utf-8")
+        if self.mount_mode == "cp":
+            subprocess.run(
+                [self.docker, "exec", self.name, "mkdir", "-p",
+                 f"/workspace/{Path(rel_path).parent}"],
+                capture_output=True, env=self._env, timeout=60)
+            subprocess.run(
+                [self.docker, "cp", str(dest), f"{self.name}:/workspace/{rel_path}"],
+                capture_output=True, env=self._env, timeout=60)
 
     def exec(self, command: str, timeout_s: int = 60) -> ExecResult:
         import time

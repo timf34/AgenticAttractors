@@ -15,7 +15,13 @@ from attractors.tools.sleep import SleepTool
 def make_ctx(tmp_path: Path):
     spec = RunSpec(experiment="t", model="m")
     clock = SimClock(datetime.fromisoformat("2026-07-13T21:00:00"), random.Random(0))
-    env = SimpleNamespace(workspace=tmp_path)
+
+    def write_file(rel_path: str, content: str) -> None:
+        dest = tmp_path / rel_path
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_text(content, encoding="utf-8")
+
+    env = SimpleNamespace(workspace=tmp_path, write_file=write_file)
     return SimpleNamespace(env=env, clock=clock, rng=random.Random(0),
                            spec=spec, run_dir=tmp_path)
 

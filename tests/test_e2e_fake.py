@@ -50,12 +50,18 @@ def turn_with_call(name: str, args: dict, i: int) -> Turn:
     )
 
 
-@pytest.fixture(scope="module")
-def session_result(tmp_path_factory):
+import os
+
+MOUNT_MODES = os.environ.get("E2E_MOUNT_MODES", "bind,cp").split(",")
+
+
+@pytest.fixture(scope="module", params=MOUNT_MODES)
+def session_result(tmp_path_factory, request):
     session_dir = tmp_path_factory.mktemp("e2e") / "session_00"
     spec = RunSpec(
         experiment="e2e", model="fake", tool_menu="T1",
         affordance="L2", max_pings=3, max_tool_calls=10, budget_usd=999,
+        mount_mode=request.param,
     )
     model_spec = ModelSpec(key="fake", litellm_model="fake/fake")
     script = [

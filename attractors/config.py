@@ -90,6 +90,11 @@ class RunSpec(BaseModel):
 
     # sandbox
     image: str = "attractors-sandbox:v1"
+    # bind: host dir bind-mounted at /workspace (fastest, needs healthy
+    # Docker file sharing). cp: container-private /workspace synced out via
+    # docker cp after every tool call (no bind mount; survives broken
+    # VirtioFS/gRPC-FUSE, works on remote docker hosts).
+    mount_mode: Literal["bind", "cp"] = "bind"
     network: bool = False
     cpus: float = 1.0
     memory: str = "1g"

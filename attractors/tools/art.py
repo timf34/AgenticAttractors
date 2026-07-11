@@ -46,7 +46,8 @@ class ArtTool:
         while path.exists():
             path = gallery / f"{base}-{n}.{ext}"
             n += 1
-        path.write_text(args["content"], encoding="utf-8")
+        # via env so the container sees it too in cp mount mode
+        ctx.env.write_file(f"gallery/{path.name}", args["content"])
         return ToolResult(
             observation=f'"{title}" added to your gallery.',
             sim_elapsed=ctx.clock.jitter(10 * 60, 30 * 60),

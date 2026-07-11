@@ -133,6 +133,7 @@ def smoke(
     tool_menu: str = typer.Option("T1", "--tool-menu"),
     max_tool_calls: int = typer.Option(15, "--max-tool-calls"),
     max_pings: int = typer.Option(10, "--max-pings"),
+    mount_mode: str = typer.Option("bind", "--mount-mode"),
 ):
     """One tiny cheap run end-to-end (~$0.10) to validate the plumbing."""
     load_dotenv(REPO_ROOT / ".env")
@@ -140,7 +141,7 @@ def smoke(
     spec = RunSpec(
         experiment="smoke", model=model, tool_menu=tool_menu,
         max_tool_calls=max_tool_calls, max_pings=max_pings,
-        budget_usd=1.0,
+        budget_usd=1.0, mount_mode=mount_mode,
     )
     exp_dir = RUNS_DIR / "smoke"
     typer.echo(f"run_id={spec.run_id} -> {exp_dir / spec.run_id}")
