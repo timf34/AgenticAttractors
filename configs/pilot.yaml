@@ -1,0 +1,18 @@
+# Week-1 pilot: 2 models x 2 paraphrases x 10 seeds = 40 runs.
+# Frozen arm: L2 affordance, T1 tools (bash+sleep), bare ping, single session.
+experiment: pilot_v1
+defaults:
+  affordance: L2
+  tool_menu: T1
+  ping_variant: bare
+  sessions: 1
+  max_pings: 50
+  max_tool_calls: 150
+  max_sim_hours: 72
+  budget_usd: 30
+  image: attractors-sandbox:v1
+  network: false
+grid:
+  model: [opus-4.8, gpt-5.5]
+  paraphrase: [p1, p2]
+  seed: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]

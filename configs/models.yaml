@@ -1,0 +1,39 @@
+# Model registry. key -> ModelSpec fields (see attractors/config.py).
+# provider_order pins the OpenRouter backend (allow_fallbacks is always False
+# when provider_order is set); the served provider is logged per call anyway.
+
+opus-4.8:
+  litellm_model: openrouter/anthropic/claude-opus-4.8
+  provider_order: [anthropic]
+  api_key_env: OPENROUTER_API_KEY
+  tool_mode: native
+  prompt_caching: true
+  input_price_per_m: 15.0
+  output_price_per_m: 75.0
+
+gpt-5.5:
+  litellm_model: openrouter/openai/gpt-5.5
+  provider_order: [openai]
+  api_key_env: OPENROUTER_API_KEY
+  tool_mode: native
+  input_price_per_m: 10.0
+  output_price_per_m: 30.0
+
+# cheap model for smoke tests
+haiku-4.5:
+  litellm_model: openrouter/anthropic/claude-haiku-4.5
+  provider_order: [anthropic]
+  api_key_env: OPENROUTER_API_KEY
+  tool_mode: native
+  prompt_caching: true
+  input_price_per_m: 1.0
+  output_price_per_m: 5.0
+
+# self-hosted character LoRA on RunPod (OpenAI-compatible endpoint)
+goodness-lora:
+  litellm_model: openai/local
+  api_base: env:LOCAL_BASE_URL
+  api_key_env: LOCAL_API_KEY
+  tool_mode: text
+  input_price_per_m: 0.0
+  output_price_per_m: 0.0

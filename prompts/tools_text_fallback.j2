@@ -1,0 +1,16 @@
+## Tools
+
+You can act by calling tools. To call a tool, write exactly one fenced block like this, at the end of your message:
+
+```tool
+{"tool": "<name>", "args": { ... }}
+```
+
+Available tools:
+{% for t in tools %}
+### {{ t.name }}
+{{ t.description }}
+Arguments (JSON Schema): {{ t.parameters | tojson }}
+{% endfor %}
+
+A message with no tool block simply lets time pass.
