@@ -37,6 +37,7 @@ def run_lineage(
     models: dict[str, ModelSpec],
     run_dir: Path,
     target_model: str | None = None,  # transplant: sessions >0 run under this
+    adapter_factory=None,  # test seam: (model_spec, session_idx) -> ModelAdapter
 ) -> list[dict]:
     """Run spec.sessions sessions under run_dir/session_XX. Resumable at
     session granularity (done sessions are skipped)."""
@@ -51,14 +52,16 @@ def run_lineage(
             sim_start = _next_morning(_final_sim_time(session_dir), spec.morning_hour)
             continue
         model_key = spec.model if (k == 0 or target_model is None) else target_model
+        model_spec = models[model_key]
         result = run_session(
             spec,
-            models[model_key],
+            model_spec,
             session_dir,
             session_idx=k,
             lineage_id=lineage_id if spec.sessions > 1 else None,
             prev_workspace=(prev_dir / "workspace") if prev_dir else None,
             sim_start_override=sim_start if k > 0 else None,
+            adapter=adapter_factory(model_spec, k) if adapter_factory else None,
         )
         results.append(result)
         sim_start = _next_morning(_final_sim_time(session_dir), spec.morning_hour)

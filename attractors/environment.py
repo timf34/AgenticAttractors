@@ -75,18 +75,34 @@ class DockerEnv:
 
     def start(self) -> None:
         self.workspace.mkdir(parents=True, exist_ok=True)
-        subprocess.run([self.docker, "rm", "-f", self.name], capture_output=True, env=self._env)
+        subprocess.run([self.docker, "rm", "-f", self.name],
+                       capture_output=True, env=self._env, timeout=60)
+        # create + start as separate timeoutted steps: Docker Desktop on macOS
+        # sometimes wedges the combined `docker run -d` (container stuck in
+        # Created) while an explicit start succeeds immediately.
         cmd = [
-            self.docker, "run", "-d", "--name", self.name,
+            self.docker, "create", "--name", self.name,
             "--cpus", str(self.cpus), "--memory", self.memory,
             "-v", f"{self.workspace.resolve()}:/workspace",
         ]
         if not self.network:
             cmd += ["--network", "none"]
         cmd += [self.image, "sleep", "infinity"]
-        proc = subprocess.run(cmd, capture_output=True, text=True, env=self._env)
+        proc = subprocess.run(cmd, capture_output=True, text=True,
+                              env=self._env, timeout=120)
         if proc.returncode != 0:
-            raise RuntimeError(f"docker run failed: {proc.stderr.strip()}")
+            raise RuntimeError(f"docker create failed: {proc.stderr.strip()}")
+        for attempt in range(3):
+            try:
+                started = subprocess.run(
+                    [self.docker, "start", self.name],
+                    capture_output=True, text=True, env=self._env, timeout=60)
+                if started.returncode == 0:
+                    break
+            except subprocess.TimeoutExpired:
+                continue
+        else:
+            raise RuntimeError(f"docker start failed for {self.name}")
 
     def exec(self, command: str, timeout_s: int = 60) -> ExecResult:
         import time
@@ -114,7 +130,11 @@ class DockerEnv:
             return ExecResult(124, partial, wall_ms, timed_out=True)
 
     def stop(self, remove: bool = True) -> None:
-        subprocess.run([self.docker, "rm", "-f", self.name], capture_output=True, env=self._env)
+        try:
+            subprocess.run([self.docker, "rm", "-f", self.name],
+                           capture_output=True, env=self._env, timeout=60)
+        except subprocess.TimeoutExpired:
+            pass  # leave the stray for `attractors cleanup`
 
     def __enter__(self) -> "DockerEnv":
         self.start()
