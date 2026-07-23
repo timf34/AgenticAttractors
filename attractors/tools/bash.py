@@ -23,7 +23,8 @@ class BashTool:
     def execute(self, args: dict, ctx: RunContext) -> ToolResult:
         command = args["command"]
         timeout_s = ctx.spec.bash_timeout_s
-        result = ctx.env.exec(command, timeout_s=timeout_s)
+        fake_time = ctx.clock.now if ctx.spec.container_time == "sim" else None
+        result = ctx.env.exec(command, timeout_s=timeout_s, fake_time=fake_time)
         obs, truncated = truncate(result.output, ctx.spec.max_observation_chars)
         if result.timed_out:
             obs += f"\n(command timed out after {timeout_s}s and was killed)"

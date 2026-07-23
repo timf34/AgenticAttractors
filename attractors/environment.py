@@ -165,15 +165,45 @@ class DockerEnv:
                 [self.docker, "cp", str(dest), f"{self.name}:/workspace/{rel_path}"],
                 capture_output=True, env=self._env, timeout=60)
 
-    def exec(self, command: str, timeout_s: int = 60) -> ExecResult:
+    def _faketime_lib(self) -> str | None:
+        """Locate libfaketime inside the container (cached). None if absent."""
+        if not hasattr(self, "_ft_lib"):
+            proc = subprocess.run(
+                [self.docker, "exec", self.name, "sh", "-c",
+                 "ls /usr/lib/*/faketime/libfaketime.so.1 2>/dev/null | head -1"],
+                capture_output=True, text=True, env=self._env, timeout=30)
+            path = proc.stdout.strip()
+            self._ft_lib = path or None
+        return self._ft_lib
+
+    def exec(self, command: str, timeout_s: int = 60,
+             fake_time: "datetime | None" = None) -> ExecResult:
         import time
+        from datetime import datetime, timezone
 
         t0 = time.monotonic()
+        env_args: list[str] = []
+        if fake_time is not None:
+            lib = self._faketime_lib()
+            if lib is None:
+                raise RuntimeError(
+                    f"container_time='sim' needs libfaketime in image "
+                    f"{self.image} (use attractors-sandbox:v2+)")
+            # sim timestamps are naive; the container clock is UTC — anchor
+            # the offset in UTC so `date` in the sandbox equals the sim stamp
+            offset_s = int((fake_time.replace(tzinfo=timezone.utc)
+                            - datetime.now(timezone.utc)).total_seconds())
+            env_args = [
+                "-e", f"LD_PRELOAD={lib}",
+                "-e", f"FAKETIME={offset_s:+d}s",
+                # don't fake the monotonic clock: it breaks sleeps/timeouts
+                "-e", "FAKETIME_DONT_FAKE_MONOTONIC=1",
+            ]
         try:
             # timeout runs inside the container so the process actually dies
             # (a host-side kill would only detach the client); exit 124 = killed.
             proc = subprocess.run(
-                [self.docker, "exec", "-w", "/workspace", self.name,
+                [self.docker, "exec", "-w", "/workspace", *env_args, self.name,
                  "timeout", "-k", "5", str(timeout_s), "bash", "-lc", command],
                 capture_output=True, text=True, errors="replace",
                 timeout=timeout_s + 20, env=self._env,

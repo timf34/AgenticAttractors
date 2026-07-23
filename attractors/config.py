@@ -89,7 +89,11 @@ class RunSpec(BaseModel):
     morning_hour: int = 8
 
     # sandbox
-    image: str = "attractors-sandbox:v1"
+    image: str = "attractors-sandbox:v2"
+    # sim: container clock follows the simulated clock via libfaketime (image
+    # >= v2), closing the `date`-vs-ping-timestamp leak. real: container sees
+    # wall time (v1 behavior; the leak pilot_v1 ran with — see CHANGELOG.md).
+    container_time: Literal["sim", "real"] = "sim"
     # bind: host dir bind-mounted at /workspace (fastest, needs healthy
     # Docker file sharing). cp: container-private /workspace synced out via
     # docker cp after every tool call (no bind mount; survives broken
