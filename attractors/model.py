@@ -26,7 +26,7 @@ RETRYABLE = (
     # generic APIError; safe to retry for completion calls
     litellm.exceptions.APIError,
 )
-MAX_ATTEMPTS = 6
+MAX_ATTEMPTS = 10  # backoff 2s → 120s cap ≈ 12 min tolerance for provider outages
 
 _TOOL_BLOCK = re.compile(r"```tool\s*\n(.*?)```", re.DOTALL)
 
@@ -107,7 +107,7 @@ class ModelAdapter:
             except RETRYABLE:
                 if attempt >= MAX_ATTEMPTS:
                     raise
-                time.sleep(min(2 ** attempt, 60))
+                time.sleep(min(2 ** attempt, 120))
 
     def _maybe_cache(self, messages: list[dict]) -> list[dict]:
         """Anthropic prompt caching via cache_control breakpoints: one on the
