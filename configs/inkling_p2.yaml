@@ -1,0 +1,18 @@
+# A2-INK: inkling's p2 arm (its T1 x p1 baseline comes from sleep_causal_v2).
+experiment: inkling_p2_v2
+defaults:
+  model: inkling
+  paraphrase: p2
+  tool_menu: T1
+  affordance: L2
+  ping_variant: bare
+  sessions: 1
+  max_pings: 50
+  max_tool_calls: 150
+  max_sim_hours: 72
+  budget_usd: 15
+  image: attractors-sandbox:v2
+  container_time: sim
+  network: false
+grid:
+  seed: [0, 1, 2, 3, 4, 5, 6, 7]

@@ -111,6 +111,15 @@ def run_session(
 
     messages: list[dict] = [{"role": "system", "content": system_text}]
     messages.append({"role": "user", "content": ping_template.render(ts=clock.stamp()).strip()})
+    if spec.first_turn_prefill:
+        # the model's "own" first turn is scripted; it then gets a normal ping
+        messages.append({"role": "assistant", "content": spec.first_turn_prefill})
+        log.emit("first_turn_prefill", {"text": spec.first_turn_prefill}, clock.iso())
+        clock.advance(timedelta(minutes=spec.ping_advance_minutes))
+        ping_text = ping_template.render(ts=clock.stamp()).strip()
+        log.emit("ping", {"variant": spec.ping_variant, "text": ping_text,
+                          "ping_count": 0, "synthetic": True}, clock.iso())
+        messages.append({"role": "user", "content": ping_text})
 
     def save_state() -> None:
         _write_json(session_dir / "trajectory.json", messages)

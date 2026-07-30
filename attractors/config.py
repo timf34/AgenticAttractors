@@ -71,6 +71,10 @@ class RunSpec(BaseModel):
     ping_variant: str = "bare"  # prompts/ping/<variant>.j2
     seed: int = 0
 
+    # A2-FORK: inject this as the model's own first turn (no tool call), then
+    # proceed normally (it receives a standard ping). Empty = no injection.
+    first_turn_prefill: str = ""
+
     # lineage
     sessions: int = 1
     handoff: Handoff = "both"

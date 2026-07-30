@@ -85,6 +85,29 @@ def run(
         if spec.model not in models:
             raise typer.BadParameter(f"unknown model key: {spec.model}")
 
+    # news-bearing arms need dated snapshots covering every reachable sim day
+    from datetime import datetime, timedelta
+
+    from attractors.tools.news import available_dates
+
+    stale_runs = []
+    for spec in specs:
+        if "news" not in spec.tool_names():
+            continue
+        start = datetime.fromisoformat(spec.sim_start).date()
+        days = int(spec.max_sim_hours // 24) + 1
+        needed = [(start + timedelta(days=d)).isoformat() for d in range(days + 1)]
+        have = set(available_dates())
+        missing = [d for d in needed if d not in have]
+        if missing:
+            stale_runs.append((spec.run_id, missing))
+    if stale_runs and not dry_run:
+        for run_id, missing in stale_runs[:5]:
+            typer.echo(f"  {run_id}: missing news snapshots {missing}")
+        raise typer.BadParameter(
+            f"{len(stale_runs)} news-bearing runs lack corpus coverage — "
+            "capture more days or adjust sim_start")
+
     if dry_run:
         total = sum(_projected_cost(s, models) for s in specs)
         typer.echo(f"experiment: {grid.experiment}")

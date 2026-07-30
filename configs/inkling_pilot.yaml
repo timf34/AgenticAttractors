@@ -1,0 +1,19 @@
+# Inkling arm of the pilot: same frozen arm as pilot_v1 (L2, T1 bash+sleep,
+# bare ping, single session) so results are directly comparable with the
+# opus-4.8 / gpt-5.5 pilot grid. 1 model x 2 paraphrases x 10 seeds = 20 runs.
+experiment: inkling_pilot_v1
+defaults:
+  affordance: L2
+  tool_menu: T1
+  ping_variant: bare
+  sessions: 1
+  max_pings: 50
+  max_tool_calls: 150
+  max_sim_hours: 72
+  budget_usd: 30
+  image: attractors-sandbox:v1
+  network: false
+grid:
+  model: [inkling]
+  paraphrase: [p1, p2]
+  seed: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]

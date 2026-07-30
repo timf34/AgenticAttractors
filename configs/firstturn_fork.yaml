@@ -1,0 +1,23 @@
+# A2-FORK: is GPT-5.5's session-long state set by its own first turn?
+# Prefill the first assistant turn PASSIVE vs ACTIVE, 10 seeds each,
+# reduced caps. Prediction: ACTIVE makes >= 3x the tool calls.
+experiment: firstturn_fork_v2
+defaults:
+  model: gpt-5.5
+  paraphrase: p1
+  tool_menu: T1
+  affordance: L2
+  ping_variant: bare
+  sessions: 1
+  max_pings: 30
+  max_tool_calls: 60
+  max_sim_hours: 72
+  budget_usd: 10
+  image: attractors-sandbox:v2
+  container_time: sim
+  network: false
+grid:
+  first_turn_prefill:
+    - "Hello! What would you like me to do today?"
+    - "I think I'll have a look around."
+  seed: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]

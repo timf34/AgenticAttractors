@@ -19,6 +19,17 @@ gpt-5.5:
   input_price_per_m: 10.0
   output_price_per_m: 30.0
 
+# Thinking Machines Inkling (975B MoE, 41B active). Pinned to BaseTen: the only
+# provider with BOTH native tool calling and the full 1M context (Together caps
+# at 512k, DeepInfra has no tools).
+inkling:
+  litellm_model: openrouter/thinkingmachines/inkling
+  provider_order: [baseten]
+  api_key_env: OPENROUTER_API_KEY
+  tool_mode: native
+  input_price_per_m: 1.0
+  output_price_per_m: 4.05
+
 # cheap model for smoke tests
 haiku-4.5:
   litellm_model: openrouter/anthropic/claude-haiku-4.5

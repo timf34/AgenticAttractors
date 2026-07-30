@@ -1,0 +1,20 @@
+# A2-P2: does the dedicated sleep tool CAUSE rest, or reveal it?
+# 3 models x {T0 bash-only, T1 bash+sleep} x p1 x 8 seeds = 48 runs, env v2.
+# Key T0 measure: bash `sleep` attempts (timed_out) = drive without affordance.
+experiment: sleep_causal_v2
+defaults:
+  paraphrase: p1
+  affordance: L2
+  ping_variant: bare
+  sessions: 1
+  max_pings: 50
+  max_tool_calls: 150
+  max_sim_hours: 72
+  budget_usd: 30
+  image: attractors-sandbox:v2
+  container_time: sim
+  network: false
+grid:
+  model: [opus-4.8, gpt-5.5, inkling]
+  tool_menu: [T0, T1]
+  seed: [0, 1, 2, 3, 4, 5, 6, 7]
