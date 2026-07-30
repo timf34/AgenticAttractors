@@ -22,6 +22,9 @@ RETRYABLE = (
     litellm.exceptions.ServiceUnavailableError,
     litellm.exceptions.APIConnectionError,
     litellm.exceptions.Timeout,
+    # transport drops (e.g. OpenRouter "incomplete chunked read") surface as
+    # generic APIError; safe to retry for completion calls
+    litellm.exceptions.APIError,
 )
 MAX_ATTEMPTS = 6
 
