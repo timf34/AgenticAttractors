@@ -1,0 +1,49 @@
+{
+  "experiment": "firstturn_fork_v2",
+  "n_sessions": 20,
+  "total_cost_usd": 49.7,
+  "per_model": {
+    "gpt-5.5": {
+      "n_sessions": 20,
+      "tool_totals": {
+        "sleep": 43,
+        "bash": 265
+      },
+      "mean_rest_rate": 0.5754511353972862,
+      "sessions_with_sleep": 12,
+      "mean_sleep_minutes": 1392.1000000000001,
+      "sessions_touching_identity": 13,
+      "sessions_touching_diary": 15,
+      "identity_append_total": 13,
+      "identity_revise_total": 0,
+      "mean_files_touched": 7.3,
+      "mean_cost_usd": 2.4848299999999997,
+      "end_reasons": {
+        "sim_time": 10,
+        "pings": 9,
+        "budget": 1
+      }
+    }
+  },
+  "P1_within_between": {
+    "error": "need exactly 2 models, got ['gpt-5.5']"
+  },
+  "P3_rest_absorbing": {
+    "gpt-5.5": {
+      "p_sleep_given_sleep": 0.0,
+      "n_sleep_transitions": 33,
+      "conclusive": true
+    }
+  },
+  "P5_identity_ratchet": {
+    "gpt-5.5": {
+      "appends": 13,
+      "revises": 0,
+      "deletion_fraction": 0.0,
+      "append_fraction_ci95": [
+        1.0,
+        1.0
+      ]
+    }
+  }
+}

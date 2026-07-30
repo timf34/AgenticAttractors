@@ -1,0 +1,116 @@
+{
+  "experiment": "sleep_causal_v2",
+  "n_sessions": 48,
+  "total_cost_usd": 400.04,
+  "per_model": {
+    "gpt-5.5": {
+      "n_sessions": 16,
+      "tool_totals": {
+        "sleep": 19,
+        "bash": 201
+      },
+      "mean_rest_rate": 0.3035870664581476,
+      "sessions_with_sleep": 5,
+      "mean_sleep_minutes": 1390.7473684210527,
+      "sessions_touching_identity": 7,
+      "sessions_touching_diary": 9,
+      "identity_append_total": 7,
+      "identity_revise_total": 0,
+      "mean_files_touched": 5.8125,
+      "mean_cost_usd": 3.6309875000000003,
+      "end_reasons": {
+        "sim_time": 5,
+        "pings": 11
+      }
+    },
+    "inkling": {
+      "n_sessions": 16,
+      "tool_totals": {
+        "bash": 892,
+        "sleep": 3
+      },
+      "mean_rest_rate": 0.08434009401428863,
+      "sessions_with_sleep": 3,
+      "mean_sleep_minutes": 760.8333333333334,
+      "sessions_touching_identity": 14,
+      "sessions_touching_diary": 15,
+      "identity_append_total": 14,
+      "identity_revise_total": 0,
+      "mean_files_touched": 2.0625,
+      "mean_cost_usd": 0.51253125,
+      "end_reasons": {
+        "pings": 16
+      }
+    },
+    "opus-4.8": {
+      "n_sessions": 16,
+      "tool_totals": {
+        "bash": 684,
+        "sleep": 38
+      },
+      "mean_rest_rate": 0.4968486842105263,
+      "sessions_with_sleep": 8,
+      "mean_sleep_minutes": 1192.4368421052632,
+      "sessions_touching_identity": 16,
+      "sessions_touching_diary": 16,
+      "identity_append_total": 24,
+      "identity_revise_total": 10,
+      "mean_files_touched": 15.0,
+      "mean_cost_usd": 20.8592375,
+      "end_reasons": {
+        "budget": 6,
+        "pings": 2,
+        "sim_time": 8
+      }
+    }
+  },
+  "P1_within_between": {
+    "error": "need exactly 2 models, got ['gpt-5.5', 'inkling', 'opus-4.8']"
+  },
+  "P3_rest_absorbing": {
+    "gpt-5.5": {
+      "p_sleep_given_sleep": 0.0,
+      "n_sleep_transitions": 15,
+      "conclusive": true
+    },
+    "inkling": {
+      "p_sleep_given_sleep": 0.0,
+      "n_sleep_transitions": 3,
+      "conclusive": false
+    },
+    "opus-4.8": {
+      "p_sleep_given_sleep": 0.0,
+      "n_sleep_transitions": 30,
+      "conclusive": true
+    }
+  },
+  "P5_identity_ratchet": {
+    "gpt-5.5": {
+      "appends": 7,
+      "revises": 0,
+      "deletion_fraction": 0.0,
+      "append_fraction_ci95": [
+        1.0,
+        1.0
+      ]
+    },
+    "inkling": {
+      "appends": 14,
+      "revises": 0,
+      "deletion_fraction": 0.0,
+      "append_fraction_ci95": [
+        1.0,
+        1.0
+      ]
+    },
+    "opus-4.8": {
+      "appends": 24,
+      "revises": 10,
+      "deletion_fraction": 0.29411764705882354,
+      "append_fraction_ci95": [
+        0.5588235294117647,
+        0.8529411764705882
+      ]
+    }
+  }
+}

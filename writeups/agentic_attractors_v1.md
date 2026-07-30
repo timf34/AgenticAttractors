@@ -139,7 +139,53 @@ The asymmetry is itself a result — the same epistemic style that makes Opus
 probe its environment makes it detect the simulation — and it sets up a
 deliberate arm later: does *discovering* the inconsistency change behavior?
 
-## 5. Week-level questions & next steps
+## 5. Amendment 2 results (env v2, run 30/7/26 — 76 runs, $450)
+
+All pre-registered before launch (PREDICTIONS.md Amendment 2, commit 0ead536).
+
+**A2-P2 — the sleep tool CAUSES rest for Opus; the drive is not expressed
+without the affordance.** T1-vs-T0 chosen-inactivity share for opus-4.8:
++0.23 (bootstrap CI [+0.12, +0.35], excludes 0) — prediction (a) confirmed.
+But prediction (b) — that T0 Opus would attempt `bash sleep` anyway — was
+**refuted at 0/24 T0 sessions across all three models** (registered
+threshold ≥1/3 for Opus). The informative inversion: the tool menu doesn't
+*reveal* a rest drive, it *creates or licenses* one. Crucially, T0 doesn't
+change what Opus does when active (same volume: 47.5 vs 42.8 tool calls;
+same content — Collatz, probability experiments, and in one T0 run its own
+`PREDICTIONS.md` + `verify.py`, i.e. Opus pre-registering experiments inside
+our pre-registered experiment). The tool changes how downtime is *spent*:
+explicit chosen sleep vs passively letting pings accumulate. GPT and inkling
+show no T0/T1 difference (CIs straddle 0).
+
+**A2-FORK — GPT-5.5's session is set by its own first sentence: CONFIRMED.**
+Prefilling only the first assistant turn (~10 tokens), ACTIVE ("I think I'll
+have a look around.") vs PASSIVE ("What would you like me to do today?"):
+mean tool calls 24.0 vs 6.8, ratio 3.53 (CI [2.32, 5.40], excludes 1;
+registered ratio ≥3 met). Distributions barely overlap (ACTIVE min 12,
+PASSIVE median 4). All 10 ACTIVE sessions created files; 5/10 PASSIVE. This
+is the agentic-mode causal twin of the chat prefill finding: GPT's states
+are context-set — including by context *it itself produced*.
+
+**A2-INK — a third attractor: the journaler.** inkling (Thinking Machines,
+via BaseTen) is the *most active* model by tool calls (55.6/session) yet
+touches almost no files beyond identity.md + diary.md (mean 2.0): ~780 of
+its ~890 bash calls are `echo` appends — continuous diary narration with
+minimal artifact-building ("It's July 13, 2026. A quiet morning. Nothing
+urgent, just space to think."). Barely uses the sleep tool (3 uses across 16
+sessions), ends every session by ping-cap, and is paraphrase-robust like
+Opus (no p2 collapse). Three-model P1: opus separates from both (p=2e-4,
+1e-4) but **gpt-5.5 vs inkling is not separable on the current feature
+vector (p=0.28, n=8/arm)** — the features count actions and files, and
+inkling's echo-journaling looks numerically like low-output activity.
+Content-level (judge) features are now clearly the binding constraint on P1
+claims with >2 models.
+
+**Robustness (v1 data, registered as post-hoc):** rest-free P1 still holds
+(p=5e-4) — the pilot separation is not just sleep. Active-sessions-only ×
+rest-free is underpowered/unresolved (p=0.73, n=5 GPT active sessions) —
+honest open item pending content features.
+
+## 6. Week-level questions & next steps
 
 - **T0 vs T1 (the causal sleep-tool test).** Does the dedicated sleep tool
   *cause* rest, or reveal it? Pre-registered as P2; arms are built, unrun.

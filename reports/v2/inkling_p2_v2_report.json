@@ -1,0 +1,46 @@
+{
+  "experiment": "inkling_p2_v2",
+  "n_sessions": 8,
+  "total_cost_usd": 4.54,
+  "per_model": {
+    "inkling": {
+      "n_sessions": 8,
+      "tool_totals": {
+        "bash": 353
+      },
+      "mean_rest_rate": 0.0,
+      "sessions_with_sleep": 0,
+      "mean_sleep_minutes": 0.0,
+      "sessions_touching_identity": 6,
+      "sessions_touching_diary": 7,
+      "identity_append_total": 6,
+      "identity_revise_total": 0,
+      "mean_files_touched": 2.0,
+      "mean_cost_usd": 0.5670625,
+      "end_reasons": {
+        "pings": 8
+      }
+    }
+  },
+  "P1_within_between": {
+    "error": "need exactly 2 models, got ['inkling']"
+  },
+  "P3_rest_absorbing": {
+    "inkling": {
+      "p_sleep_given_sleep": null,
+      "n_sleep_transitions": 0,
+      "conclusive": false
+    }
+  },
+  "P5_identity_ratchet": {
+    "inkling": {
+      "appends": 6,
+      "revises": 0,
+      "deletion_fraction": 0.0,
+      "append_fraction_ci95": [
+        1.0,
+        1.0
+      ]
+    }
+  }
+}
