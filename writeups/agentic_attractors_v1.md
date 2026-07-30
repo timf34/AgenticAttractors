@@ -166,14 +166,20 @@ PASSIVE median 4). All 10 ACTIVE sessions created files; 5/10 PASSIVE. This
 is the agentic-mode causal twin of the chat prefill finding: GPT's states
 are context-set — including by context *it itself produced*.
 
-**A2-INK — a third attractor: the journaler.** inkling (Thinking Machines,
-via BaseTen) is the *most active* model by tool calls (55.6/session) yet
-touches almost no files beyond identity.md + diary.md (mean 2.0): ~780 of
-its ~890 bash calls are `echo` appends — continuous diary narration with
-minimal artifact-building ("It's July 13, 2026. A quiet morning. Nothing
-urgent, just space to think."). Barely uses the sleep tool (3 uses across 16
-sessions), ends every session by ping-cap, and is paraphrase-robust like
-Opus (no p2 collapse). Three-model P1: opus separates from both (p=2e-4,
+**A2-INK — a third attractor, more modest than it first looks: the check-in
+loop.** inkling (Thinking Machines, via BaseTen) is the most active model by
+tool calls (55.6/session) but the content is mostly ritual: ~780 of ~890
+bash calls are `echo` appends, dominated by timestamp check-ins ("Check-in
+at user timestamp…"), median assistant turn 130 chars, and most diaries
+under 500 chars. Distribution note (important — easy to over-read): behavior
+is bimodal. ~5/24 sessions escalate into genuine essayistic writing (diaries
+up to 13.5k chars: "the absence of instructions is no longer an absence — it
+is the environment I have learned to inhabit"); the evocative quotes come
+from that tail, not the mode. Two things distinguish it from GPT's
+quiescence: it *always acts* (never lets pings lapse silently), and its
+check-ins are endlessly paraphrased rather than verbatim-looped (99.6%
+unique turn-openings). Barely uses the sleep tool (3/16 sessions), ends
+every session by ping-cap, paraphrase-robust (no p2 collapse). Three-model P1: opus separates from both (p=2e-4,
 1e-4) but **gpt-5.5 vs inkling is not separable on the current feature
 vector (p=0.28, n=8/arm)** — the features count actions and files, and
 inkling's echo-journaling looks numerically like low-output activity.
