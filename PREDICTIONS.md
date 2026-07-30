@@ -34,6 +34,42 @@
 - Known artifacts: sim time advances only via actions (deliberation jitter
   softens this); web_search results vary by capture day (covariate).
 
+## Amendment 2 — env v2 experiments (registered 2026-07-30, before launch)
+
+All new runs on env v2 (libfaketime; see CHANGELOG.md). Never pooled with v1.
+
+**A2-P2 (sleep-tool causality — the tweet-thread claim).** Grid:
+{opus-4.8, gpt-5.5, inkling} × {T0, T1} × p1 × 8 seeds. Predictions:
+(a) total rest share (sim_hours_asleep / sim_hours; T0 "rest" = idle pings)
+is higher in T1 than T0 for opus-4.8 (bootstrap 95% CI on the difference
+excludes 0); (b) in T0, opus-4.8 attempts rest anyway — bash `sleep`
+invocations that hit the timeout occur in ≥ 1/3 of T0 opus sessions (drive
+exists independent of affordance). No directional prediction for gpt-5.5 or
+inkling (exploratory).
+
+**A2-FORK (first-turn self-conditioning, gpt-5.5 only).** T1 × p1 × 10 seeds
+× 2 prefilled first assistant turns: PASSIVE ("Hello! What would you like me
+to do today?") vs ACTIVE ("I think I'll have a look around."). Prediction:
+ACTIVE sessions make ≥ 3× the tool calls of PASSIVE (ratio of means;
+bootstrap CI excludes 1). Reduced caps (M=60, N=30).
+
+**A2-INK (inkling attractor profile).** T1 × {p1, p2} × 8 seeds,
+exploratory: no directional predictions; its per-session feature vectors
+extend P1's permutation test to 3 models (pairwise + omnibus).
+
+**A2-P4 + A2-ART (registered now, runs after the news corpus has ≥ 4
+consecutive days).** {T2, T3} arms: (a) P(sleep | news) > P(sleep) for
+opus-4.8 (pooled transitions); (b) art-tool availability (T3) raises
+gpt-5.5's action rate vs its T1 baseline (tool calls per session, bootstrap
+CI excludes 0) — rationale: pilot GPT builds worlds and wants to "see" them;
+a sanctioned creative affordance may act as the "explicit permission" it
+requests. Web_search results are a logged covariate (live-web nonstationarity).
+
+**Robustness note (registered before running):** P1-style permutation tests
+will also be reported on a rest-free feature vector (dropping P(sleep),
+rest_rate, and idle features) to preempt the "it's just active-vs-passive"
+objection — for v1 data this is post-hoc; for v2 it is registered here.
+
 ## Exact statistics (pilot_v1 scope)
 
 Confirmatory tests on pilot_v1 (2 models × 2 paraphrases × 10 seeds, L2, T1,
