@@ -127,12 +127,9 @@ def run(
         if state == "done":
             continue
         if state == "stale":
-            if resume:
-                # lineage resumes at session granularity; only archive if you
-                # want a clean retry of failed sessions
-                pass
-            else:
-                _archive_attempt(run_dir)
+            # always archive failed/interrupted attempts: re-running into the
+            # same dir would append to its events.jsonl and corrupt analysis
+            _archive_attempt(run_dir)
         todo.append(spec)
 
     typer.echo(f"{len(todo)}/{len(specs)} runs to execute (parallel={parallel})")
