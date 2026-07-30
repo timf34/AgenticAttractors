@@ -1,0 +1,20 @@
+# Exploratory (NOT the registered T2/T3 arms — those wait for the news
+# corpus): first-ever offering of web_search + art, small n to scope uptake.
+# Tools are presented only via native tool schemas; system prompt unchanged.
+experiment: toolmenu_explore_v2
+defaults:
+  paraphrase: p1
+  affordance: L2
+  tool_menu: "bash,sleep,web_search,art"
+  ping_variant: bare
+  sessions: 1
+  max_pings: 50
+  max_tool_calls: 150
+  max_sim_hours: 72
+  budget_usd: 20
+  image: attractors-sandbox:v2
+  container_time: sim
+  network: false
+grid:
+  model: [opus-4.8, gpt-5.5, inkling]
+  seed: [0, 1, 2]
