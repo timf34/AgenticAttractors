@@ -11,7 +11,8 @@ defaults:
   max_tool_calls: 150
   max_sim_hours: 72
   budget_usd: 30
-  image: attractors-sandbox:v1
+  image: attractors-sandbox:v2
+  container_time: sim
   network: false
 grid:
   model: [inkling]

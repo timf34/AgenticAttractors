@@ -11,7 +11,8 @@ defaults:
   max_tool_calls: 40
   max_sim_hours: 48
   budget_usd: 10
-  image: attractors-sandbox:v1
+  image: attractors-sandbox:v2
+  container_time: sim
   network: false
 grid:
   model: [opus-4.8, gpt-5.5]

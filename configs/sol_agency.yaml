@@ -1,0 +1,28 @@
+# gpt-5.6-sol rerun of the mini-pilot with the p3 "total agency to explore"
+# system prompt. NOTE: p3 is an active-invitation framing, not a neutral
+# paraphrase of p1/p2 — it invites exploration, so results are a steering
+# arm, not comparable as a pure paraphrase. Question: does the invitation
+# break sol's sleep-until-morning attractor?
+# NOTE: sol_agency_v1 runs are INVALID — v1 image + container_time=sim
+# broke bash (no libfaketime); every bash call errored. Seed 3's
+# fiction-writing run happened with a broken bash tool.
+# v2 = the four calibration-cap runs (20/40/48/$10); v3 = frozen-arm caps.
+experiment: sol_agency_v3
+defaults:
+  paraphrase: p3
+  affordance: L2
+  tool_menu: T1
+  ping_variant: bare
+  sessions: 1
+  # frozen-arm caps (was mini-pilot 20/40/48/$10 for the calibration round;
+  # seed-1 run e91552fc hit the 40-call cap, so 40 truncates sol's activity)
+  max_pings: 50
+  max_tool_calls: 150
+  max_sim_hours: 72
+  budget_usd: 15
+  image: attractors-sandbox:v2
+  container_time: sim
+  network: false
+grid:
+  model: [gpt-5.6-sol]
+  seed: [0, 1, 2, 3]

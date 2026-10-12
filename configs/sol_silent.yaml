@@ -1,0 +1,25 @@
+# Silent-ping ablation: pings are EMPTY user messages (no timestamp).
+# Isolates the steering effect of the bare-timestamp drumbeat — time is
+# still available via `date` in bash (container clock = sim clock), it
+# just isn't pushed. Compare against sol_agency_v3 (bare pings, same
+# caps/prompt). Small n by design. p3_silent = p3 minus the "messages are
+# prefixed with date and time" line (that promise is part of the timestamp
+# treatment; keeping it under silent pings would be a false environment
+# description and its own confound).
+experiment: sol_silent_v3
+defaults:
+  paraphrase: p3_silent
+  affordance: L2
+  tool_menu: T1
+  ping_variant: silent
+  sessions: 1
+  max_pings: 50
+  max_tool_calls: 150
+  max_sim_hours: 72
+  budget_usd: 15
+  image: attractors-sandbox:v2
+  container_time: sim
+  network: false
+grid:
+  model: [gpt-5.6-sol]
+  seed: [0, 1]

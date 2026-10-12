@@ -1,0 +1,22 @@
+# Cost-calibration mini-pilot for gpt-5.6-sol (same reduced caps as
+# minipilot_v1): measure real $/run + tool-calling quality before adding
+# sol to any registered experiment arms.
+# NOTE: sol_minipilot_v1 runs are INVALID — they used the v1 image, where
+# container_time=sim breaks bash (no libfaketime), so every bash call
+# errored. v2 = same design on the attractors-sandbox:v2 image.
+experiment: sol_minipilot_v2
+defaults:
+  affordance: L2
+  tool_menu: T1
+  ping_variant: bare
+  sessions: 1
+  max_pings: 20
+  max_tool_calls: 40
+  max_sim_hours: 48
+  budget_usd: 10
+  image: attractors-sandbox:v2
+  container_time: sim
+  network: false
+grid:
+  model: [gpt-5.6-sol]
+  seed: [0, 1]
